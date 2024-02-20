@@ -5,7 +5,7 @@ const Gameboard = (function () {
     const showBoardState = () => console.log(gameboard);
 
     const pickCell = function (playerMark, cell) {
-        if (!(!!gameboard[cell]) || cell === '') {
+        if (!gameboard[cell] || cell === '') {
             gameboard[cell] = playerMark;            
         }
         else {
@@ -45,7 +45,7 @@ const Gameboard = (function () {
         }
     }
 
-    return { pickCell, resetBoard, showBoardState, testik, winCheck, };
+    return { pickCell, resetBoard, showBoardState, testik, winCheck, }; //Remove testik when done
 })();
 
 const createPlayer = function (chosenMark, name) {
