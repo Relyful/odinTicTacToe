@@ -59,15 +59,17 @@ const createPlayer = function (chosenMark, name) {
     return { name, placeMark, showMark }
 };
 
-const game = function () {
-    player1 = createPlayer('x', prompt('Player 1 name?', 'Player1'));
-    player2 = createPlayer('o', prompt('Player 2 name?', 'Player2'));
+const game = (function () {
+    const pickNames = function () {
+        player1 = createPlayer('x', prompt('Player 1 name?', 'Player1'));
+        player2 = createPlayer('o', prompt('Player 2 name?', 'Player2'));
+    }
 
     const playerChoice = function (player) {
         do {
             currentPlayerChoice = prompt(`${player.name} pick your position (0-8)!`);
         }
-        while (+currentPlayerChoice < 0 && +currentPlayerChoice > 8);
+        while (+currentPlayerChoice < 0 || +currentPlayerChoice > 8);
         let result = player.placeMark(currentPlayerChoice);
         if (result === 1) {
             gameboard.resetBoard();
@@ -103,10 +105,14 @@ const game = function () {
         return state;
     }
     
-    do {
-        state = gameRound();
-        console.log(`State is ${state}`);
+    const fullGame = function () {
+        do {
+            state = gameRound();
+            console.log(`State is ${state}`);
+        }
+        while(state === 0);
+        return;    
     }
-    while(state === 0);
-    return;    
-}
+    return { fullGame, pickNames };
+})();
+
