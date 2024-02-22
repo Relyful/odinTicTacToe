@@ -4,7 +4,7 @@ const gameboard = (function () {
     let gameboard = [];
     let roundCounter = 0;
 
-    const showBoardState = () => console.log(gameboard);
+    const showBoardState = () => gameboard;
 
     // check for available cell 
     const pickCell = function (playerMark, cell) {
@@ -15,7 +15,7 @@ const gameboard = (function () {
             console.log('This cell is already taken');
             return 3;
         }
-        console.log(roundCounter++);
+        console.log(`Round ${roundCounter++}`);
         return winCheck(playerMark);
     };
 
@@ -48,7 +48,7 @@ const gameboard = (function () {
         }
     }
 
-    return { pickCell, resetBoard, showBoardState, testik, winCheck, };
+    return { pickCell, resetBoard, showBoardState, winCheck, };
 })();
 
 // Factory that creates Player object with name and function to place their mark on the board and function to show their mark
@@ -63,24 +63,18 @@ const createPlayer = function (chosenMark, name) {
 };
 
 // Main game object that creates player and then runs game logic until someone wins or the game ends in draw
-const game = (function () {
+const createGame = function () {
     const pickNames = function () {
         player1 = createPlayer('x', prompt('Player 1 name?', 'Player1'));
         player2 = createPlayer('o', prompt('Player 2 name?', 'Player2'));
     }
 
-    const playerChoice = function (player) {
-        // make sure player picks only available cell 0-8
-        do {
-            currentPlayerChoice = prompt(`${player.name} pick your position (0-8)!`);
-        }
-        while (+currentPlayerChoice < 0 || +currentPlayerChoice > 8);
-        let result = player.placeMark(currentPlayerChoice);
-        // Logic to that calls wincheck and returns result 
-        // if the result is 3 it means the cell is already taken and player has to make different choice
+    const playerChoice = function (player, cell) {
+        
+        let result = player.placeMark(cell);
         if (result === 1) {
             gameboard.resetBoard();
-            console.log(`${player.name} won!`);
+            alert(`${player.name} won!`);
             return 1;
         }
         else if (result === 3) {
@@ -88,7 +82,7 @@ const game = (function () {
         }
         else if (result === 2) {
             gameboard.resetBoard();
-            console.log('Draw!')
+            alert('Draw!');
             return 2;
         }
         else if (result === 0) {
@@ -96,18 +90,10 @@ const game = (function () {
         }
     }
 
-    const gameRound = function () {
-        // Keep asking for player choice until valid choice is made and terminate game if player won 
+    const gameRound = function (player) {
+        // Keep asking for player choice until valid choice is made and terminate game if player won        
         do {
-            state = playerChoice(player1);
-            if (state === 1 || state === 2) {
-                return state;
-            }            
-        }
-        while (state === 3);
-        
-        do {
-            state = playerChoice(player2);
+            state = playerChoice(player);
         }
         while (state === 3);        
         return state;
@@ -123,6 +109,72 @@ const game = (function () {
         while(state === 0);
         return;    
     }
-    return { fullGame, pickNames };
-})();
+    return { fullGame, gameRound, playerChoice, pickNames };
+};
 
+const showGame = function () {    
+    let game = createGame();   
+    let currentPlayer;   
+    const boardDiv = document.querySelector('.gameBoard');
+    const cPlayerDiv = document.querySelector('.currentPlayer');
+    let currentBoard;
+
+    const drawBoard = function () {
+        boardDiv.innerHTML = '';
+        currentBoard = gameboard.showBoardState();
+        for (let i = 0; i < 9; i++) {
+            let cell = document.createElement('button');
+            cell.classList.add('cell');
+            cell.dataset.index = i;
+            cell.textContent = currentBoard[i];
+            boardDiv.appendChild(cell);
+        }        
+    };
+
+    const drawPlayerName = function (cPlayer) {
+        cPlayerDiv.textContent = `${cPlayer}`;
+    };
+    
+    function clickCell(player) {        
+        const cellDivs = document.querySelectorAll('.cell');
+        cellDivs.forEach((element) => {     
+            if (element.textContent === "") {
+                element.addEventListener('click', function () {
+                    console.log('klikol som na button a nieco sa deje');
+                    console.log(`Array cislo: ${element.dataset.index}`);
+                    let result = game.playerChoice(player, element.dataset.index);
+                    if (result === 1 || result === 2) {
+                        drawBoard();
+                        drawPlayerName('');
+                        return;
+                    }
+                    console.log(`Result je: ${result}`);    
+                    drawBoard();
+                    if (currentPlayer === player1) {
+                        currentPlayer = player2;
+                    }                     
+                    else {
+                        currentPlayer = player1;
+                    } 
+                    clickCell(currentPlayer);               
+                } )
+
+            }       
+            
+            console.log('pridal som event listener');
+        } )
+    };
+    const playGame = function () {
+        game.pickNames();
+        currentPlayer = player1;
+        drawBoard();        
+        drawPlayerName(currentPlayer.name);
+        clickCell(currentPlayer);
+    }
+
+    
+
+
+
+    return { drawBoard, drawPlayerName, playGame, clickCell };
+}
