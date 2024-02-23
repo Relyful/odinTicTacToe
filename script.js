@@ -1,3 +1,7 @@
+const form = document.querySelector('form');
+const winner = document.querySelector('.winner');
+const divCurrentPlayer = document.querySelector('.currentPlayer');
+
 // object that holds gameboard array and has functions that allow us to place mark on board,
 // show gameboard array, reset the board and check for win state
 const gameboard = (function () {
@@ -39,8 +43,8 @@ const gameboard = (function () {
         (gameboard[2] === playerMark && gameboard[2] === gameboard[4] && gameboard[2] === gameboard[6])) {
             return 1;
         }
-        // draw after 8 rounds
-        else if (roundCounter >= 8) {
+        // draw after 9 rounds
+        else if (roundCounter >= 9) {
             return 2;
         }
         else {
@@ -64,25 +68,37 @@ const createPlayer = function (chosenMark, name) {
 
 // Main game object that creates player and then runs game logic until someone wins or the game ends in draw
 const createGame = function () {
+    let player1;
+    let player2;
+    let player1Name = document.querySelector('#p1Name');
+    let player2Name = document.querySelector('#p2Name');
     const pickNames = function () {
-        player1 = createPlayer('x', prompt('Player 1 name?', 'Player1'));
-        player2 = createPlayer('o', prompt('Player 2 name?', 'Player2'));
+        console.log(player1Name, player2Name);
+        if (player1Name.value === '') {
+            player1 = createPlayer('x', 'Player1' );
+        }
+        else {
+            player1 = createPlayer('x', player1Name.value);
+        }
+
+        if (player2Name.value === '') {
+            player2 = createPlayer('o', 'Player2' );
+        }
+        else {
+            player2 = createPlayer('o', player2Name.value);
+        }
     }
 
     const playerChoice = function (player, cell) {
         
         let result = player.placeMark(cell);
-        if (result === 1) {
-            gameboard.resetBoard();
-            alert(`${player.name} won!`);
+        if (result === 1) {            
             return 1;
         }
         else if (result === 3) {
             return 3;
         }
-        else if (result === 2) {
-            gameboard.resetBoard();
-            alert('Draw!');
+        else if (result === 2) {            
             return 2;
         }
         else if (result === 0) {
@@ -109,15 +125,41 @@ const createGame = function () {
         while(state === 0);
         return;    
     }
-    return { fullGame, gameRound, playerChoice, pickNames };
+
+    const getPlayer1 = () => player1;
+    const getPlayer2 = () => player2;
+
+    return { fullGame, gameRound, playerChoice, pickNames, getPlayer1, getPlayer2 };
 };
 
-const showGame = function () {    
+const showGame = (function () {    
     let game = createGame();   
-    let currentPlayer;   
+    let currentPlayer;       
     const boardDiv = document.querySelector('.gameBoard');
     const cPlayerDiv = document.querySelector('.currentPlayer');
+    const startBut = document.querySelector('.startBut');
+    const resetBut = document.querySelector('.resetBut');    
     let currentBoard;
+
+    startBut.addEventListener('click', (e) => {
+        e.preventDefault();
+        playGame();
+        form.reset();
+        form.style.display = 'none';
+        resetBut.style.display = 'block';
+        divCurrentPlayer.style.display = 'block';
+        winner.style.display = 'none';
+    })
+
+    resetBut.addEventListener('click', (e) => {
+        gameboard.resetBoard();
+        drawBoard();
+        drawPlayerName('');
+        form.style.display = 'flex';
+        resetBut.style.display = 'none';
+        divCurrentPlayer.style.display = 'none';
+        winner.style.display = 'none';
+    })
 
     const drawBoard = function () {
         boardDiv.innerHTML = '';
@@ -132,7 +174,7 @@ const showGame = function () {
     };
 
     const drawPlayerName = function (cPlayer) {
-        cPlayerDiv.textContent = `${cPlayer}`;
+        cPlayerDiv.textContent = `Current Player: ${cPlayer}`;
     };
     
     function clickCell(player) {        
@@ -142,10 +184,25 @@ const showGame = function () {
                 element.addEventListener('click', function () {
                     console.log('klikol som na button a nieco sa deje');
                     console.log(`Array cislo: ${element.dataset.index}`);
+                    const player1 = game.getPlayer1();
+                    const player2 = game.getPlayer2();
                     let result = game.playerChoice(player, element.dataset.index);
-                    if (result === 1 || result === 2) {
+                    if (result === 1) {
+                        gameboard.resetBoard();
                         drawBoard();
-                        drawPlayerName('');
+                        drawPlayerName('');                        
+                        winner.textContent = `${player.name} won!`;
+                        divCurrentPlayer.style.display = 'none';
+                        winner.style.display = 'block';
+                        return;
+                    }
+                    else if (result === 2) {
+                        gameboard.resetBoard();
+                        drawBoard();
+                        drawPlayerName('');                        
+                        winner.textContent = 'Draw!';
+                        winner.style.display = 'block';
+                        divCurrentPlayer.style.display = 'none';
                         return;
                     }
                     console.log(`Result je: ${result}`);    
@@ -156,6 +213,7 @@ const showGame = function () {
                     else {
                         currentPlayer = player1;
                     } 
+                    drawPlayerName(currentPlayer.name);
                     clickCell(currentPlayer);               
                 } )
 
@@ -166,15 +224,13 @@ const showGame = function () {
     };
     const playGame = function () {
         game.pickNames();
+        const player1 = game.getPlayer1();        
         currentPlayer = player1;
         drawBoard();        
         drawPlayerName(currentPlayer.name);
-        clickCell(currentPlayer);
+        clickCell(currentPlayer);                
     }
-
-    
-
-
-
     return { drawBoard, drawPlayerName, playGame, clickCell };
-}
+})();
+
+showGame.drawBoard();

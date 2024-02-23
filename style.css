@@ -1,18 +1,112 @@
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&display=swap');
+
 *,
 *::after,
 *::before {
     padding: 0px;
     margin: 0px;
-    box-sizing: border-box;
+    box-sizing: border-box;    
+}
+
+.container * {
+    /* border: 1px solid black; */
+}
+
+.container {
+    width: 80vw;
+    height: 100vh;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    font-family: "Exo 2", sans-serif;
+}
+
+header {
+    flex-basis: 20vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 2em;
+}
+
+header p {
+    font-size: 0.5em;
+}
+
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+main form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: all ease-out;
+}
+
+main form input {
+    outline: none;
+}
+
+main form input:focus {
+    box-shadow: 0 0 2px 2px rgb(135, 184, 224);
+}
+
+.row {
+    margin: 3px;
+}
+
+.startBut, .resetBut {
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 10px;
+}
+
+.startBut {
+    margin-top: 10px;
+    padding: 10px;
+    font-family: inherit;
+}
+
+.resetBut {
+    padding: 15px;
+    align-self: center;
+    display: none;
+    margin-bottom: 25px;
+    font-family: inherit;
+}
+
+.winner {
+    display: none;
+    padding-top: 15px;
+    font-size: 2em;
+    font-weight: 700;
+    align-self: center;
 }
 
 .gameBoard {
+    margin-top: 5%;
     display: grid;
+    gap: 2px;
     grid-template-columns: 150px 150px 150px;
     grid-template-rows: 150px 150px 150px;
-
+    width: 450px;
+    align-self: center;
+    background-color: black;
 }
 
 .cell {
-    /* background-color: black; */
+    background-color: white;
+    box-shadow: none;
+    border: none;
+}
+
+.currentPlayer {
+    align-self: center;
+    font-size: 1.2em;
+    font-weight: bold;
 }
