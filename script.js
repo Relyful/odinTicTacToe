@@ -48,7 +48,7 @@ const gameboard = (function () {
         else {
             return 0;
         }
-    }
+    };
 
     return { pickCell, resetBoard, showBoardState, winCheck, };
 })();
@@ -70,6 +70,7 @@ const createGame = function () {
     let player2;
     let player1Name = document.querySelector('#p1Name');
     let player2Name = document.querySelector('#p2Name');
+    // Get names from name form and create player objects with it automatic assign X and O
     const pickNames = function () {
         if (player1Name.value === '') {
             player1 = createPlayer('x', 'Player1' );
@@ -84,8 +85,9 @@ const createGame = function () {
         else {
             player2 = createPlayer('o', player2Name.value);
         }
-    }
+    };
 
+    // calls placeMark from player and returns win draw or no win
     const playerChoice = function (player, cell) {
         
         let result = player.placeMark(cell);
@@ -101,13 +103,14 @@ const createGame = function () {
         else if (result === 0) {
             return 0;
         }
-    }
+    };
     const getPlayer1 = () => player1;
     const getPlayer2 = () => player2;
 
     return { playerChoice, pickNames, getPlayer1, getPlayer2 };
 };
 
+// Main function which purpose is to run the game and show it on the page with DOM objects
 const showGame = (function () {    
     let game = createGame();   
     let currentPlayer;       
@@ -117,6 +120,7 @@ const showGame = (function () {
     const resetBut = document.querySelector('.resetBut');    
     let currentBoard;
 
+    // start game button behaviour
     startBut.addEventListener('click', (e) => {
         e.preventDefault();
         playGame();
@@ -125,8 +129,9 @@ const showGame = (function () {
         resetBut.style.display = 'block';
         divCurrentPlayer.style.display = 'block';
         winner.style.display = 'none';
-    })
+    });
 
+    // reset game button behaviour
     resetBut.addEventListener('click', (e) => {
         gameboard.resetBoard();
         drawBoard();
@@ -135,8 +140,9 @@ const showGame = (function () {
         resetBut.style.display = 'none';
         divCurrentPlayer.style.display = 'none';
         winner.style.display = 'none';
-    })
+    });
 
+    // draws 9 buttons on board and gives it class 'cell' and draws content inside cell based on gameboard array 
     const drawBoard = function () {
         boardDiv.innerHTML = '';
         currentBoard = gameboard.showBoardState();
@@ -149,13 +155,18 @@ const showGame = (function () {
         }        
     };
 
+    // Show current player on webpage
     const drawPlayerName = function (cPlayer) {
         cPlayerDiv.textContent = `Current Player: ${cPlayer}`;
     };
     
+    // Most of the game happens, here this function is first called when game is started ,
+    // after that this function keeps calling itself until someone wins the game
+    // after game ends, shows result
     function clickCell(player) {        
         const cellDivs = document.querySelectorAll('.cell');
         cellDivs.forEach((element) => {     
+            //only add event listener when cell is empty
             if (element.textContent === "") {
                 element.addEventListener('click', function () {
                     const player1 = game.getPlayer1();
@@ -187,20 +198,22 @@ const showGame = (function () {
                     } 
                     drawPlayerName(currentPlayer.name);
                     clickCell(currentPlayer);               
-                } )
-
-            }            
-        } )
+                })
+            }
+        })
     };
+
+    // game starter function, this gets called when player presses start game button
     const playGame = function () {
         game.pickNames();
-        const player1 = game.getPlayer1();        
+        const player1 = game.getPlayer1();
         currentPlayer = player1;
-        drawBoard();        
+        drawBoard();
         drawPlayerName(currentPlayer.name);
-        clickCell(currentPlayer);                
+        clickCell(currentPlayer);
     }
-    return { playGame };
+    return { playGame, drawBoard };
 })();
 
+// Draws board when game is loaded
 showGame.drawBoard();
