@@ -187,8 +187,7 @@ const showGame = (function () {
                     const player1 = game.getPlayer1();
                     const player2 = game.getPlayer2();
                     let result = game.playerChoice(player, element.dataset.index);
-                    if (result === 1) {
-                        gameboard.resetBoard();
+                    if (result === 1) {                        
                         drawBoard();
                         drawPlayerName('');                        
                         winner.textContent = `${player.name} won!`;
