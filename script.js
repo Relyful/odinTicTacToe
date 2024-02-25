@@ -42,7 +42,7 @@ const gameboard = (function () {
             return 1;
         }
         // draw after 9 rounds
-        else if (roundCounter >= 9) {
+        else if (roundCounter >= 8) {
             return 2;
         }
         else {
