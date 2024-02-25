@@ -42,7 +42,7 @@ const gameboard = (function () {
             return 1;
         }
         // draw after 9 rounds
-        else if (roundCounter >= 8) {
+        else if (++roundCounter >= 9) {
             return 2;
         }
         else {
@@ -180,13 +180,12 @@ const showGame = (function () {
                         winner.style.display = 'block';
                         return;
                     }
-                    else if (result === 2) {
-                        gameboard.resetBoard();
+                    else if (result === 2) {                        
                         drawBoard();
                         drawPlayerName('');                        
                         winner.textContent = 'Draw!';
-                        winner.style.display = 'block';
                         divCurrentPlayer.style.display = 'none';
+                        winner.style.display = 'block';
                         return;
                     }
                     drawBoard();
