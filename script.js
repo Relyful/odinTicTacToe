@@ -160,7 +160,7 @@ const showGame = (function () {
         cPlayerDiv.textContent = `Current Player: ${cPlayer}`;
     };
     
-    // Most of the game happens, here this function is first called when game is started ,
+    // Most of the game happens here, this function is first called when game is started ,
     // after that this function keeps calling itself until someone wins the game
     // after game ends, shows result
     function clickCell(player) {        
