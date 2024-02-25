@@ -8,6 +8,14 @@
     box-sizing: border-box;    
 }
 
+a {
+    color: black;
+}
+
+a:visited {
+    color: black;
+}
+
 .container {
     width: 80vw;
     height: 100vh;
