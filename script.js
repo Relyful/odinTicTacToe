@@ -16,10 +16,8 @@ const gameboard = (function () {
             gameboard[cell] = playerMark;            
         }
         else {
-            console.log('This cell is already taken');
             return 3;
         }
-        console.log(`Round ${roundCounter++}`);
         return winCheck(playerMark);
     };
 
@@ -73,7 +71,6 @@ const createGame = function () {
     let player1Name = document.querySelector('#p1Name');
     let player2Name = document.querySelector('#p2Name');
     const pickNames = function () {
-        console.log(player1Name, player2Name);
         if (player1Name.value === '') {
             player1 = createPlayer('x', 'Player1' );
         }
@@ -105,31 +102,10 @@ const createGame = function () {
             return 0;
         }
     }
-
-    const gameRound = function (player) {
-        // Keep asking for player choice until valid choice is made and terminate game if player won        
-        do {
-            state = playerChoice(player);
-        }
-        while (state === 3);        
-        return state;
-    }
-    
-    // Calls all game logic and runs a full game of tic tac toe until someone won or game draws
-    const fullGame = function () {
-        pickNames();
-        do {
-            state = gameRound();
-            console.log(`State is ${state}`);
-        }
-        while(state === 0);
-        return;    
-    }
-
     const getPlayer1 = () => player1;
     const getPlayer2 = () => player2;
 
-    return { fullGame, gameRound, playerChoice, pickNames, getPlayer1, getPlayer2 };
+    return { playerChoice, pickNames, getPlayer1, getPlayer2 };
 };
 
 const showGame = (function () {    
@@ -182,8 +158,6 @@ const showGame = (function () {
         cellDivs.forEach((element) => {     
             if (element.textContent === "") {
                 element.addEventListener('click', function () {
-                    console.log('klikol som na button a nieco sa deje');
-                    console.log(`Array cislo: ${element.dataset.index}`);
                     const player1 = game.getPlayer1();
                     const player2 = game.getPlayer2();
                     let result = game.playerChoice(player, element.dataset.index);
@@ -204,7 +178,6 @@ const showGame = (function () {
                         divCurrentPlayer.style.display = 'none';
                         return;
                     }
-                    console.log(`Result je: ${result}`);    
                     drawBoard();
                     if (currentPlayer === player1) {
                         currentPlayer = player2;
@@ -216,9 +189,7 @@ const showGame = (function () {
                     clickCell(currentPlayer);               
                 } )
 
-            }       
-            
-            console.log('pridal som event listener');
+            }            
         } )
     };
     const playGame = function () {
@@ -229,7 +200,7 @@ const showGame = (function () {
         drawPlayerName(currentPlayer.name);
         clickCell(currentPlayer);                
     }
-    return { drawBoard, drawPlayerName, playGame, clickCell };
+    return { playGame };
 })();
 
 showGame.drawBoard();
